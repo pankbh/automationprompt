@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Automation Prompt Writing Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tab-container {
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: scale(1.02);
+        }
+
+        .tab:hover:not(.active) {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .form-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e1e5e9;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-item:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.02);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .output-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #28a745;
+        }
+
+        .output-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            border: 1px solid #e1e5e9;
+            min-height: 200px;
+        }
+
+        .copy-btn {
+            margin-top: 10px;
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .template-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .template-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .template-card h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .template-card p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .use-template-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .use-template-btn:hover {
+            background: #5a67d8;
+        }
+
+        .best-practices {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .best-practices h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .best-practices ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .best-practices li {
+            padding: 10px 0;
+            border-bottom: 1px solid #e1e5e9;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .best-practices li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .best-practices li:last-child {
+            border-bottom: none;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🤖 Test Automation Prompt Writer</h1>
+        <p>Create clear, comprehensive prompts for AI-assisted test automation</p>
+    </div>
+
+    <div class="content">
+        <div class="tab-container">
+            <button class="tab active" onclick="showTab('builder')">Prompt Builder</button>
+            <button class="tab" onclick="showTab('templates')">Templates</button>
+            <button class="tab" onclick="showTab('guidelines')">Best Practices</button>
+        </div>
+
+        <div id="builder" class="tab-content active">
+            <form id="promptForm">
+                <div class="form-section">
+                    <h3>📋 Test Context</h3>
+                    <div class="form-group">
+                        <label for="appType">Application Type:</label>
+                        <select id="appType">
+                            <option value="web">Web Application</option>
+                            <option value="mobile">Mobile Application</option>
+                            <option value="api">API/Backend Service</option>
+                            <option value="desktop">Desktop Application</option>
+                            <option value="microservice">Microservice</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="testType">Test Type:</label>
+                        <select id="testType">
+                            <option value="unit">Unit Tests</option>
+                            <option value="integration">Integration Tests</option>
+                            <option value="e2e">End-to-End Tests</option>
+                            <option value="api">API Tests</option>
+                            <option value="performance">Performance Tests</option>
+                            <option value="security">Security Tests</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="framework">Testing Framework:</label>
+                        <select id="framework">
+                            <option value="selenium">Selenium WebDriver</option>
+                            <option value="cypress">Cypress</option>
+                            <option value="playwright">Playwright</option>
+                            <option value="jest">Jest</option>
+                            <option value="pytest">Pytest</option>
+                            <option value="testng">TestNG</option>
+                            <option value="junit">JUnit</option>
+                            <option value="postman">Postman/Newman</option>
+                            <option value="rest-assured">REST Assured</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>🎯 Feature to Test</h3>
+                    <div class="form-group">
+                        <label for="featureName">Feature/Component Name:</label>
+                        <input type="text" id="featureName" placeholder="e.g., User Login, Shopping Cart, Payment Processing">
+                    </div>
+                    <div class="form-group">
+                        <label for="featureDescription">Feature Description:</label>
+                        <textarea id="featureDescription" rows="3" placeholder="Describe what this feature does and its key functionality..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="userStory">User Story (optional):</label>
+                        <textarea id="userStory" rows="2" placeholder="As a [user type], I want [goal] so that [benefit]..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>🔧 Technical Requirements</h3>
+                    <div class="form-group">
+                        <label for="programmingLanguage">Programming Language:</label>
+                        <select id="programmingLanguage">
+                            <option value="javascript">JavaScript</option>
+                            <option value="python">Python</option>
+                            <option value="java">Java</option>
+                            <option value="csharp">C#</option>
+                            <option value="typescript">TypeScript</option>
+                            <option value="ruby">Ruby</option>
+                            <option value="go">Go</option>
+                            <option value="php">PHP</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Test Requirements (select all that apply):</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="dataSetup" value="dataSetup">
+                                <label for="dataSetup">Test data setup</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="mocking" value="mocking">
+                                <label for="mocking">Mocking/Stubbing</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="assertions" value="assertions">
+                                <label for="assertions">Comprehensive assertions</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="errorHandling" value="errorHandling">
+                                <label for="errorHandling">Error handling</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="cleanup" value="cleanup">
+                                <label for="cleanup">Test cleanup</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="parallel" value="parallel">
+                                <label for="parallel">Parallel execution</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="reporting" value="reporting">
+                                <label for="reporting">Custom reporting</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="ci" value="ci">
+                                <label for="ci">CI/CD integration</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>📝 Test Scenarios</h3>
+                    <div class="form-group">
+                        <label for="scenarios">Test Scenarios to Cover:</label>
+                        <textarea id="scenarios" rows="4" placeholder="List the specific test scenarios you want to cover:
+- Happy path scenario
+- Edge cases
+- Error conditions
+- Boundary value testing
+etc."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="testData">Test Data Requirements:</label>
+                        <textarea id="testData" rows="3" placeholder="Describe the test data needed (users, products, configurations, etc.)"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>⚙️ Additional Context</h3>
+                    <div class="form-group">
+                        <label for="environment">Test Environment:</label>
+                        <input type="text" id="environment" placeholder="e.g., local, staging, docker, cloud">
+                    </div>
+                    <div class="form-group">
+                        <label for="constraints">Constraints/Limitations:</label>
+                        <textarea id="constraints" rows="2" placeholder="Any specific constraints, limitations, or requirements..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="additionalNotes">Additional Notes:</label>
+                        <textarea id="additionalNotes" rows="3" placeholder="Any other relevant information, coding standards, or specific requirements..."></textarea>
+                    </div>
+                </div>
+
+                <button type="button" class="generate-btn" onclick="generatePrompt()">
+                    🚀 Generate Test Automation Prompt
+                </button>
+            </form>
+
+            <div id="output" class="output-section" style="display: none;">
+                <h3>📋 Generated Prompt</h3>
+                <div id="generatedPrompt" class="output-content"></div>
+                <button class="copy-btn" onclick="copyPrompt()">📋 Copy to Clipboard</button>
+            </div>
+        </div>
+
+        <div id="templates" class="tab-content">
+            <h2>📚 Test Automation Prompt Templates</h2>
+            <div class="template-grid">
+                <div class="template-card">
+                    <h4>🌐 Web Application E2E Testing</h4>
+                    <p>Template for end-to-end testing of web applications with user workflows, form validation, and cross-browser compatibility.</p>
+                    <button class="use-template-btn" onclick="useTemplate('web-e2e')">Use Template</button>
+                </div>
+                <div class="template-card">
+                    <h4>🔌 API Testing</h4>
+                    <p>Comprehensive API testing including CRUD operations, authentication, error handling, and response validation.</p>
+                    <button class="use-template-btn" onclick="useTemplate('api')">Use Template</button>
+                </div>
+                <div class="template-card">
+                    <h4>🧪 Unit Testing</h4>
+                    <p>Unit test generation for functions, methods, and components with mocking and edge case coverage.</p>
+                    <button class="use-template-btn" onclick="useTemplate('unit')">Use Template</button>
+                </div>
+                <div class="template-card">
+                    <h4>📱 Mobile App Testing</h4>
+                    <p>Mobile application testing for iOS/Android including gestures, device features, and responsive design.</p>
+                    <button class="use-template-btn" onclick="useTemplate('mobile')">Use Template</button>
+                </div>
+                <div class="template-card">
+                    <h4>🔐 Security Testing</h4>
+                    <p>Security-focused test automation for authentication, authorization, input validation, and vulnerability testing.</p>
+                    <button class="use-template-btn" onclick="useTemplate('security')">Use Template</button>
+                </div>
+                <div class="template-card">
+                    <h4>⚡ Performance Testing</h4>
+                    <p>Performance test automation for load testing, stress testing, and performance monitoring.</p>
+                    <button class="use-template-btn" onclick="useTemplate('performance')">Use Template</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="guidelines" class="tab-content">
+            <h2>💡 Best Practices for Test Automation Prompts</h2>
+            <div class="best-practices">
+                <h3>
+                    <svg class="icon" fill="#28a745" viewBox="0 0 20 20">
+                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Essential Guidelines
+                </h3>
+                <ul>
+                    <li><strong>Be Specific:</strong> Clearly define the feature, component, or functionality you want to test</li>
+                    <li><strong>Include Context:</strong> Provide application type, technology stack, and testing framework details</li>
+                    <li><strong>Define Test Scenarios:</strong> List specific scenarios including happy path, edge cases, and error conditions</li>
+                    <li><strong>Specify Requirements:</strong> Include assertions, test data setup, cleanup, and reporting needs</li>
+                    <li><strong>Set Expectations:</strong> Clearly state what you want the AI to generate (complete test suite, individual tests, etc.)</li>
+                    <li><strong>Include Examples:</strong> Provide sample data, expected outcomes, or existing test patterns to follow</li>
+                    <li><strong>Mention Standards:</strong> Reference coding standards, naming conventions, or team practices</li>
+                    <li><strong>Consider Environment:</strong> Specify testing environment, configuration, and deployment context</li>
+                    <li><strong>Error Handling:</strong> Request tests for error conditions, timeouts, and exception scenarios</li>
+                    <li><strong>Maintainability:</strong> Ask for readable, maintainable code with good documentation</li>
+                </ul>
+            </div>
+
+            <div class="best-practices" style="margin-top: 20px;">
+                <h3>
+                    <svg class="icon" fill="#dc3545" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"/>
+                    </svg>
+                    Common Pitfalls to Avoid
+                </h3>
+                <ul>
+                    <li><strong>Vague Requirements:</strong> Avoid generic requests like "create tests for my app"</li>
+                    <li><strong>Missing Framework Details:</strong> Don't forget to specify testing framework and language</li>
+                    <li><strong>Incomplete Scenarios:</strong> Don't only focus on happy path testing</li>
+                    <li><strong>No Test Data:</strong> Forgetting to specify test data requirements and setup</li>
+                    <li><strong>Ignoring Environment:</strong> Not mentioning environment-specific configurations</li>
+                    <li><strong>No Cleanup Strategy:</strong> Forgetting to request proper test cleanup and teardown</li>
+                    <li><strong>Missing Assertions:</strong> Not specifying what validations should be performed</li>
+                    <li><strong>No Error Cases:</strong> Overlooking negative test scenarios and error handling</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const templates = {
+        'web-e2e': `Generate comprehensive end-to-end tests for a web application using Cypress framework.
+
+Application Context:
+- Web application: [Feature Name]
+- Technology: [Tech stack]
+- Framework: Cypress with JavaScript
+
+Test Requirements:
+1. Create tests for the complete user workflow: [describe workflow]
+2. Include form validation testing
+3. Test cross-browser compatibility scenarios
+4. Implement page object model pattern
+5. Add proper wait strategies and element selectors
+6. Include screenshot capture on failures
+7. Set up test data and cleanup
+
+Test Scenarios:
+- User login and authentication
+- Main feature functionality (happy path)
+- Form field validation (required fields, formats)
+- Error message validation
+- Navigation and routing
+- Responsive design elements
+
+Technical Requirements:
+- Use descriptive test names and organize in test suites
+- Implement custom commands for reusable actions
+- Add proper assertions for UI elements and data
+- Include accessibility testing where applicable
+- Set up for CI/CD pipeline integration
+
+Please generate complete test files with proper setup, teardown, and documentation.`,
+
+        'api': `Create comprehensive API test automation using [Framework] for [API Name].
+
+API Context:
+- API Type: REST API
+- Base URL: [API endpoint]
+- Authentication: [Auth method]
+- Framework: [Testing framework]
+- Language: [Programming language]
+
+Test Coverage Required:
+1. CRUD Operations Testing:
+- GET requests with various parameters
+- POST requests with different payloads
+- PUT/PATCH requests for updates
+- DELETE requests and cascading effects
+
+2. Authentication & Authorization:
+- Valid token scenarios
+- Expired/invalid token handling
+- Role-based access testing
+
+3. Data Validation:
+- Request payload validation
+- Response schema validation
+- Data type and format verification
+
+4. Error Handling:
+- HTTP status code validation
+- Error message verification
+- Invalid input handling
+
+5. Performance Considerations:
+- Response time assertions
+- Concurrent request handling
+
+Technical Requirements:
+- Generate reusable helper functions
+- Implement proper test data management
+- Add comprehensive assertions
+- Include logging and reporting
+- Set up for continuous integration
+
+Please provide complete test suite with setup, test cases, and utility functions.`,
+
+        'unit': `Generate comprehensive unit tests for [Component/Function Name] using [Testing Framework].
+
+Component Context:
+- Component/Function: [Name and purpose]
+- Language: [Programming language]
+- Framework: [Testing framework]
+- Dependencies: [List external dependencies]
+
+Test Coverage Requirements:
+1. Core Functionality:
+- Test all public methods/functions
+- Verify expected return values
+- Test different input parameters
+
+2. Edge Cases:
+- Boundary value testing
+- Null/undefined input handling
+- Empty data scenarios
+
+3. Error Conditions:
+- Exception handling
+- Invalid input responses
+- Dependency failures
+
+4. Mock/Stub Requirements:
+- Mock external dependencies
+- Stub API calls and database interactions
+- Isolate unit under test
+
+5. State Testing:
+- Initial state verification
+- State changes after operations
+- Side effects validation
+
+Technical Specifications:
+- Achieve 90%+ code coverage
+- Use descriptive test names
+- Follow AAA pattern (Arrange, Act, Assert)
+- Include test data setup and cleanup
+- Add performance assertions where relevant
+
+Please generate complete test suite with proper mocking, assertions, and documentation.`,
+
+        'mobile': `Create mobile application test automation for [App Name] using [Framework].
+
+Mobile App Context:
+- Platform: [iOS/Android/Cross-platform]
+- App Type: [Native/Hybrid/React Native]
+- Framework: [Appium/Detox/XCUITest/Espresso]
+- Device Target: [Device specifications]
+
+Test Scenarios:
+1. App Lifecycle:
+- App launch and initialization
+- Background/foreground transitions
+- App termination and restart
+
+2. UI Interactions:
+- Touch gestures (tap, swipe, pinch)
+- Text input and keyboard handling
+- Navigation and screen transitions
+
+3. Device Features:
+- Camera functionality
+- GPS/location services
+- Push notifications
+- Offline/online mode switching
+
+4. Performance:
+- Memory usage monitoring
+- Battery consumption
+- Network request handling
+
+5. Cross-Device Testing:
+- Different screen sizes
+- OS version compatibility
+- Device-specific features
+
+Technical Requirements:
+- Implement page object model
+- Add proper wait strategies
+- Include screenshot capture
+- Set up parallel test execution
+- Integrate with CI/CD pipeline
+- Add device farm compatibility
+
+Please provide complete mobile test automation suite with setup instructions.`,
+
+        'security': `Generate security-focused test automation for [Application Name].
+
+Security Testing Context:
+- Application: [Type and description]
+- Framework: [Security testing framework]
+- Scope: [Authentication, Authorization, Input validation, etc.]
+
+Security Test Categories:
+1. Authentication Testing:
+- Valid/invalid credentials
+- Session management
+- Password policies
+- Multi-factor authentication
+
+2. Authorization Testing:
+- Role-based access control
+- Privilege escalation attempts
+- Resource access validation
+
+3. Input Validation:
+- SQL injection attempts
+- XSS vulnerability testing
+- Command injection testing
+- File upload security
+
+4. Data Protection:
+- Sensitive data exposure
+- Encryption validation
+- Data transmission security
+
+5. Session Management:
+- Session timeout testing
+- Session fixation
+- Concurrent session handling
+
+Technical Requirements:
+- Use security testing libraries
+- Implement payload generation
+- Add vulnerability scanning
+- Include compliance checks (OWASP Top 10)
+- Generate detailed security reports
+- Set up automated security scans
+
+Please create comprehensive security test suite with attack vectors and validation.`,
+
+        'performance': `Create performance test automation for [Application Name] using [Performance Testing Tool].
+
+Performance Testing Context:
+- Application: [Description and architecture]
+- Tool: [JMeter/Gatling/K6/LoadRunner]
+- Environment: [Testing environment details]
+- Performance Goals: [Response time, throughput, etc.]
+
+Performance Test Types:
+1. Load Testing:
+- Normal expected load simulation
+- User behavior modeling
+- Sustained load scenarios
+
+2. Stress Testing:
+- Peak load conditions
+- Breaking point identification
+- System recovery testing
+
+3. Spike Testing:
+- Sudden load increases
+- Traffic surge handling
+- Auto-scaling validation
+
+4. Volume Testing:
+- Large data set processing
+- Database performance under load
+- Memory usage patterns
+
+5. Endurance Testing:
+- Extended duration testing
+- Memory leak detection
+- Resource cleanup validation
+
+Metrics to Monitor:
+- Response time (average, 95th percentile)
+- Throughput (requests per second)
+- Error rate and types
+- Resource utilization (CPU, memory, disk)
+- Database performance metrics
+
+Technical Requirements:
+- Parameterize test data
+- Implement ramp-up strategies
+- Add real-time monitoring
+- Generate performance reports
+- Set up alerting thresholds
+- Integrate with CI/CD pipeline
+
+Please provide complete performance test suite with monitoring and reporting.`
+    };
+
+    function showTab(tabName) {
+        // Hide all tab contents
+        const contents = document.querySelectorAll('.tab-content');
+        contents.forEach(content => content.classList.remove('active'));
+
+        // Remove active class from all tabs
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => tab.classList.remove('active'));
+
+        // Show selected tab content
+        document.getElementById(tabName).classList.add('active');
+
+        // Add active class to clicked tab
+        event.target.classList.add('active');
+    }
+
+    function useTemplate(templateKey) {
+        const template = templates[templateKey];
+        if (template) {
+            // Switch to builder tab
+            showTab('builder');
+            document.querySelector('.tab[onclick="showTab(\'builder\')"]').classList.add('active');
+
+            // Show output section and populate with template
+            const output = document.getElementById('output');
+            const promptContent = document.getElementById('generatedPrompt');
+
+            output.style.display = 'block';
+            promptContent.textContent = template;
+
+            // Scroll to output
+            output.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    function generatePrompt() {
+        const form = document.getElementById('promptForm');
+        const formData = new FormData(form);
+
+        // Get form values
+        const appType = formData.get('appType') || document.getElementById('appType').value;
+        const testType = formData.get('testType') || document.getElementById('testType').value;
+        const framework = formData.get('framework') || document.getElementById('framework').value;
+        const featureName = document.getElementById('featureName').value;
+        const featureDescription = document.getElementById('featureDescription').value;
+        const userStory = document.getElementById('userStory').value;
+        const programmingLanguage = document.getElementById('programmingLanguage').value;
+        const scenarios = document.getElementById('scenarios').value;
+        const testData = document.getElementById('testData').value;
+        const environment = document.getElementById('environment').value;
+        const constraints = document.getElementById('constraints').value;
+        const additionalNotes = document.getElementById('additionalNotes').value;
+
+        // Get selected requirements
+        const requirements = [];
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+        checkboxes.forEach(cb => {
+            const label = cb.nextElementSibling.textContent;
+            requirements.push(label);
+        });
+
+        // Generate prompt
+        let prompt = `Create comprehensive ${testType} automation for "${featureName}" using ${framework} framework.
+
+APPLICATION CONTEXT:
+- Application Type: ${appType.charAt(0).toUpperCase() + appType.slice(1)} Application
+- Feature: ${featureName}
+- Testing Framework: ${framework}
+- Programming Language: ${programmingLanguage}
+- Environment: ${environment || 'Not specified'}`;
+
+        if (featureDescription) {
+            prompt += `\n- Feature Description: ${featureDescription}`;
+        }
+
+        if (userStory) {
+            prompt += `\n- User Story: ${userStory}`;
+        }
+
+        prompt += `\n\nTEST REQUIREMENTS:`;
+
+        if (requirements.length > 0) {
+            prompt += `\nInclude the following capabilities:`;
+            requirements.forEach(req => {
+                prompt += `\n- ${req}`;
+            });
+        }
+
+        if (scenarios) {
+            prompt += `\n\nTEST SCENARIOS TO COVER:\n${scenarios}`;
+        }
+
+        if (testData) {
+            prompt += `\n\nTEST DATA REQUIREMENTS:\n${testData}`;
+        }
+
+        // Add standard requirements based on test type
+        prompt += `\n\nTECHNICAL SPECIFICATIONS:`;
+
+        switch (testType) {
+            case 'unit':
+                prompt += `\n- Follow AAA pattern (Arrange, Act, Assert)
+- Achieve high code coverage (90%+)
+- Include mock/stub implementations for dependencies
+- Test edge cases and error conditions
+- Use descriptive test names and organize in test suites`;
+                break;
+            case 'integration':
+                prompt += `\n- Test component interactions and data flow
+- Verify API integrations and database operations
+- Include setup and teardown for test environment
+- Validate error handling between components
+- Test configuration and dependency injection`;
+                break;
+            case 'e2e':
+                prompt += `\n- Implement page object model pattern
+- Use proper wait strategies and element selectors
+- Include cross-browser compatibility testing
+- Add screenshot capture on test failures
+- Validate complete user workflows`;
+                break;
+            case 'api':
+                prompt += `\n- Test all HTTP methods (GET, POST, PUT, DELETE)
+- Validate request/response schemas
+- Include authentication and authorization tests
+- Test error handling and status codes
+- Verify data persistence and state changes`;
+                break;
+            case 'performance':
+                prompt += `\n- Define load patterns and user scenarios
+- Set performance benchmarks and SLAs
+- Monitor resource utilization metrics
+- Include ramp-up and ramp-down strategies
+- Generate detailed performance reports`;
+                break;
+            case 'security':
+                prompt += `\n- Test authentication and session management
+- Validate input sanitization and XSS protection
+- Check for SQL injection vulnerabilities
+- Verify access control and authorization
+- Include OWASP Top 10 security tests`;
+                break;
+        }
+
+        prompt += `\n- Use clear, maintainable code with proper documentation
+- Include proper error handling and logging
+- Set up for CI/CD pipeline integration
+- Generate comprehensive test reports`;
+
+        if (constraints) {
+            prompt += `\n\nCONSTRAINTS/LIMITATIONS:\n${constraints}`;
+        }
+
+        if (additionalNotes) {
+            prompt += `\n\nADDITIONAL REQUIREMENTS:\n${additionalNotes}`;
+        }
+
+        prompt += `\n\nDELIVERABLES:
+Please provide:
+1. Complete test suite with all necessary test cases
+2. Test setup and configuration files
+3. Helper functions and utilities
+4. Test data management approach
+5. Execution instructions and documentation
+6. CI/CD integration guidelines
+
+Generate production-ready, maintainable test automation code that follows best practices for ${framework} and ${programmingLanguage}.`;
+
+        // Display the generated prompt
+        const output = document.getElementById('output');
+        const promptContent = document.getElementById('generatedPrompt');
+
+        output.style.display = 'block';
+        promptContent.textContent = prompt;
+
+        // Scroll to output
+        output.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function copyPrompt() {
+        const promptContent = document.getElementById('generatedPrompt');
+        navigator.clipboard.writeText(promptContent.textContent).then(() => {
+            const btn = document.querySelector('.copy-btn');
+            const originalText = btn.textContent;
+            btn.textContent = '✅ Copied!';
+            btn.style.background = '#28a745';
+
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.background = '#28a745';
+            }, 2000);
+        }).catch(() => {
+            // Fallback for older browsers
+            const textArea = document.createElement('textarea');
+            textArea.value = promptContent.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+
+            const btn = document.querySelector('.copy-btn');
+            btn.textContent = '✅ Copied!';
+            setTimeout(() => {
+                btn.textContent = '📋 Copy to Clipboard';
+            }, 2000);
+        });
+    }
+
+    // Initialize with default tab
+    document.addEventListener('DOMContentLoaded', function() {
+        showTab('builder');
+    });
+</script>
+</body>
+</html>
