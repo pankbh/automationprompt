@@ -283,22 +283,3 @@ If page cannot be accessed or analyzed:
 6. ✅ Maintenance Guidelines
 
 ---
-
-## Notes for Test Automation Architect
-
-- **Maintainability**: Prioritize stable locators over brittle ones
-- **Reusability**: Create methods that can be reused across tests
-- **Scalability**: Structure allows easy addition of new elements
-- **Best Practices**: Follow framework-specific recommendations
-- **Documentation**: Code should be self-documenting with clear names
-- **Version Control**: Include version/date in class header comments
-- **Browser Compatibility**: Test selectors across target browsers
-
----
-
-## Version Control
-- **Version**: 1.0
-- **Last Updated**: 2025-10-04
-- **Framework**: Playwright
-- **Language**: TypeScript
-- **Maintained By**: Test Automation Team
