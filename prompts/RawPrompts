@@ -1,0 +1,11 @@
+As a senior test automation architect , I want to write a prompt which would fetch the elements locators from page url https://www.citivelocity.com/login/. 
+Input 
+web Page URL : 
+Instructions
+Extract the page html source
+Read the outer and inner html 
+use unique locator strategy using id, name...
+use xpath or css if required
+Output
+Need each element with a logical name like <element_name_typeofelement> username_input
+Generate a page class considering typescript and playwright feature
